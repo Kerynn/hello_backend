@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+
 def customers(request):
     data = Customer.objects.all()
     serializer = CustomerSerializer(data, many=True)
@@ -16,7 +17,12 @@ def customer(request, id):
         data = Customer.objects.get(pk=id)
     except Customer.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = CustomerSerializer(data)
-    return Response({'customer': serializer.data})
+
+    if request.method == 'GET':
+        serializer = CustomerSerializer(data)
+        return Response({'customer': serializer.data})
+    elif request.method == 'DELETE':
+        data.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     
